@@ -5,8 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>购物车</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .list{
+            width:500px;
+            height:30px;
+            background:thistle;
+            text-align:center;
+            line-height:30px;
+            display:flex;
+            justify-content:space-around;
+            margin:5px;
+
+        }
+    </style>
 </head>
 <body>
-    
+    <div class='list'>
+        <span>牙膏</span>
+        <span>10个</span>
+        <span>单价: 35元</span>
+        <span>总价: 350元</span>
+    </div>
+    <script>
+       var _list=document.querySelector(".list");
+       var newlist=_list.cloneNode(true);
+       var _name=newlist.firstElementChild;
+       _name.innerHTML=localStorage.name;
+       var _num=
+       newlist.firstElementChild.innerHTML=localStorage.name;
+    </script>
 </body>
 </html>

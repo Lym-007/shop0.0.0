@@ -5,8 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>商品列表</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .box{
+            margin:10px;
+            float:left;
+            width:200px;
+            height:200px;
+            border:1px solid silver;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-around;
+            align-items:center;
+            background:thistle;
+            border-radius:10px;
+        }
+        .num{
+            width:50px;
+            height:30px;
+            font-size:16px;
+            line-height:30px;
+            text-align:center;
+            display:inline-block;
+        }
+        h5{
+            display:inline-block;
+        }
+        .btn{
+            cursor:pointer;
+            text-align:center;
+            width:80px;
+            height:20px;
+            padding:5px;
+            font-size:14px;
+            background:red;
+            display:inline-block;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="box">
+        <h3>牙刷</h3>
+        <h5>价格</h5>
+        <h5>颜色</h5>
+        <h5>介绍</h5>
+        <div >
+            <!-- <h5>数量</h5> -->
+            <input type="number" value='1' min='1' max='99' class='num'>
+            <div class="btn"> 加入购物车</div>
+        </div>  
+    </div>
+    <script src='js/ajax.js'></script>
+    <script>
+        // 把商品渲染到页面中
+        // 用户可以点击添加购物车
+        // 最后跳转到购物车页面,刚才加入购物车的商品就可以展示到页面中
+        //渲染商品
+        var add=function(data){
+            //转成对象
+          //  data=JSON.parse(data);
+            console.log(data);
+            for(var i=0;i<data.length;i++){
+                var _box=document.querySelector(".box");
+                var newbox=_box.cloneNode(true);
+                var _name=newbox.firstElementChild;
+                //下一个元素节点
+                var _price=_name.nextElementSibling;
+                var _color=_price.nextElementSibling;
+                var _ps=_color.nextElementSibling;
+                
+                //渲染值
+                newbox.index=data[i].id;//将id设为index
+                _name.innerHTML=data[i].name;
+                _price.innerHTML="价格:"+data[i].price;  
+                _color.innerHTML="颜色:"+data[i].color;
+                _ps.innerHTML="简介:"+data[i].ps;
+                console.log(_ps);
+                document.body.appendChild(newbox);
+            }
+            document.body.removeChild(document.body.firstElementChild);
+        }
+
+            var options={
+                success:add
+            }
+            sendAjax("shop.php",options);
+            var addtoc=function(data){
+                console.log(data);
+                for(var i in data){
+                    console.log(data[i]);
+                    localStorage.setItem(i,data[i]);
+                }
+            }
+                document.onmousedown=function(e){
+                    e=e||window.event;
+                    var target=e.target||e.srcElement;
+                    console.log(1);
+                    if(target.nodeName==="DIV"&&target.className==="btn"){
+                        console.log(target);
+                         var _box=target.parentNode.parentNode;
+                         console.log(_box.index);
+                            var addobj={
+                                data:{
+                                    id:_box.index,
+                                    name:_box.firstElementChild.innerHTML,
+                                    price:_box.firstElementChild.nextElementSibling.innerHTML.split(":")[1],
+                                },
+                                success:addtoc
+                            }
+                       sendAjax("car.php",addobj);
+                    }
+            }
+    </script>
 </body>
 </html>
