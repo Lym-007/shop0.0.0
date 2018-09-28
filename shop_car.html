@@ -18,7 +18,7 @@
             line-height:30px;
             display:flex;
             justify-content:space-around;
-            margin:5px;
+            margin:10px;
 
         }
     </style>
@@ -26,17 +26,28 @@
 <body>
     <div class='list'>
         <span>牙膏</span>
-        <span>10个</span>
-        <span>单价: 35元</span>
-        <span>总价: 350元</span>
+        数量：<span>10</span>
+        单价:<span> 35</span>元
+        总价:<span> 350</span>元
     </div>
-    <script>
-       var _list=document.querySelector(".list");
-       var newlist=_list.cloneNode(true);
-       var _name=newlist.firstElementChild;
-       _name.innerHTML=localStorage.name;
-       var _num=
-       newlist.firstElementChild.innerHTML=localStorage.name;
-    </script>
 </body>
+<script>
+    var data=JSON.parse(localStorage.list);
+    for(var i=0;i<data.length;i++){
+         var _list=document.querySelector(".list");
+        var newlist=_list.cloneNode(true);
+        newlist.index=data[i].id;
+        var _name=newlist.firstElementChild;
+        _name.innerHTML=data[i].name;
+        var _num=_name.nextElementSibling;
+        _num.innerHTML=data[i].number;
+        var _price=_num.nextElementSibling;
+        _price.innerHTML=data[i].price;
+        var _total=_price.nextElementSibling;
+        _total.innerHTML=_price.innerHTML*_num.innerHTML;
+        document.body.appendChild(newlist);
+    }
+       
+        document.body.removeChild(document.body.firstElementChild);
+     </script>
 </html>
