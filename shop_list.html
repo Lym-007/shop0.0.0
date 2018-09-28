@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,11 @@
         *{
             margin:0;
             padding:0;
+        }
+        html,body{
+            padding-top:30px;
+            width:100%;
+            height:100%;
         }
         .box{
             margin:10px;
@@ -20,7 +26,8 @@
             flex-direction:column;
             justify-content:space-around;
             align-items:center;
-            background:thistle;
+            background:rgb(169, 232, 236);
+            border:1px solid;
             border-radius:10px;
         }
         .num{
@@ -41,101 +48,134 @@
             height:20px;
             padding:5px;
             font-size:14px;
-            background:red;
+            background:mediumpurple;
             display:inline-block;
         }
+        .btnbox{
+            width:100%;
+            height:70px;
+            position:fixed;
+            left:0;
+            top:0;
+            background:mintcream;
+        }
         .car{
+            position:absolute;
+            left:50%;
+            top:10px;
+            margin-left:-50px;
             width:100px;
             height:50px;
-            background:orangered;
+            background:mediumturquoise;
+            
         }
     </style>
 </head>
+
 <body>
     <div class="box">
         <h3>牙刷</h3>
         <h5>价格</h5>
         <h5>颜色</h5>
         <h5>介绍</h5>
-        <div >
+        <div>
             <!-- <h5>数量</h5> -->
-            <input type="number" value='1' min='1' max='99' class='num'>
+            <input type="number" value='1' min='1' class='num'>
             <div class="btn"> 加入购物车</div>
-        </div>  
+        </div>
     </div>
-    <button class='car'>购物车</button>
+    <div class='btnbox'><button class='car'>购物车</button></div>
     <script src='js/ajax.js'></script>
     <script>
         // 把商品渲染到页面中
         // 用户可以点击添加购物车
         // 最后跳转到购物车页面,刚才加入购物车的商品就可以展示到页面中
         //渲染商品
-        var _car=document.querySelector(".car");
-        _car.onclick=function(){
-            location.href="shop_car.html";
+        //localStorage.clear();
+        var list;
+        var _car = document.querySelector(".car");
+        _car.onclick = function () {
+            location.href = "shop_car.html";
         }
-        var add=function(data){
-            //转成对象
-          //  data=JSON.parse(data);
+        var add = function (data) {
             console.log(data);
-            for(var i=0;i<data.length;i++){
-                var _box=document.querySelector(".box");
-                var newbox=_box.cloneNode(true);
-                var _name=newbox.firstElementChild;
+            for (var i = 0; i < data.length; i++) {
+                var _box = document.querySelector(".box");
+                var newbox = _box.cloneNode(true);
+                var _name = newbox.firstElementChild;
                 //下一个元素节点
-                var _price=_name.nextElementSibling;
-                var _color=_price.nextElementSibling;
-                var _ps=_color.nextElementSibling;
-                
+                var _price = _name.nextElementSibling;
+                var _color = _price.nextElementSibling;
+                var _ps = _color.nextElementSibling;
+
                 //渲染值
-                newbox.index=data[i].id;//将id设为index
-                _name.innerHTML=data[i].name;
-                _price.innerHTML="价格:"+data[i].price;  
-                _color.innerHTML="颜色:"+data[i].color;
-                _ps.innerHTML="简介:"+data[i].ps;
+                newbox.index = data[i].id;//将id设为index
+                _name.innerHTML = data[i].name;
+                _price.innerHTML = "价格:" + data[i].price;
+                _color.innerHTML = "颜色:" + data[i].color;
+                _ps.innerHTML = "简介:" + data[i].ps;
                 console.log(_ps);
                 document.body.appendChild(newbox);
             }
             document.body.removeChild(document.body.firstElementChild);
         }
 
-            var options={
-                success:add
+        var options = {
+            success: add
+        }
+        sendAjax("shop.php", options);
+        var addtoc = function (data) {
+            console.log(data);
+            if (list.length <= 0) {
+                list.push(data);
             }
-            sendAjax("shop.php",options);
-            var list=[];
-            var addtoc=function(data){
-                console.log(data);
-                    if(list.indexOf(data)<=-1){
-                        list.push(data);
+            else {
+                var flag = 0;
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].id === data.id) {
+                        list[i].number = list[i].number*1+data.number*1;
+                    } else {
+                        flag = 1;
                     }
-                // for(var i in data){
-                //     console.log(data[i]);
-                //     localStorage.setItem(i,data[i]);
-                // }
-                console.log(list);
-                localStorage.list=JSON.stringify(list);
+                }
+                if (flag) {
+                    list.push(data);
+                }
             }
-                document.onmousedown=function(e){
-                    e=e||window.event;
-                    var target=e.target||e.srcElement;
-                    console.log(1);
-                    if(target.nodeName==="DIV"&&target.className==="btn"){
-                        console.log(target);
-                         var _box=target.parentNode.parentNode;
-                         console.log(_box.index);
-                            var addobj={
-                                data:{
-                                    id:_box.index,
-                                    name:_box.firstElementChild.innerHTML,
-                                    number:target.previousElementSibling.value,
-                                    price:_box.firstElementChild.nextElementSibling.innerHTML.split(":")[1],
-                                },
-                                success:addtoc
-                            }
-                       sendAjax("car.php",addobj);
-                    }
+            console.log(list);
+            localStorage.list = JSON.stringify(list);
+            if (localStorage.list) {
+                alert("加入成功");
             }
+        }
+        document.onmousedown = function (e) {
+            if (localStorage.length) {
+                list = JSON.parse(localStorage.list);
+            }
+            else {
+                list = [];
+            }
+
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            console.log(1);
+            if (target.nodeName === "DIV" && target.className === "btn") {
+                console.log(target);
+                var _box = target.parentNode.parentNode;
+                console.log(_box.index);
+                var addobj = {
+                    data: {
+                        id: _box.index,
+                        name: _box.firstElementChild.innerHTML,
+                        number: target.previousElementSibling.value,
+                        price: _box.firstElementChild.nextElementSibling.innerHTML.split(":")[1],
+                    },
+                    success: addtoc
+                }
+                sendAjax("car.php", addobj);
+            }
+        }
     </script>
 </body>
+
 </html>
